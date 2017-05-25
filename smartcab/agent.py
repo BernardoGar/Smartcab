@@ -9,7 +9,7 @@ class LearningAgent(Agent):
     """ An agent that learns to drive in the Smartcab world.
         This is the object you will be modifying. """ 
 
-    def __init__(self, env, learning=True, epsilon=1.0, alpha=0.5):
+    def __init__(self, env, learning=True, epsilon=1.0, alpha=1):
         super(LearningAgent, self).__init__(env)     # Set the agent in the evironment 
         self.planner = RoutePlanner(self.env, self)  # Create a route planner
         self.valid_actions = self.env.valid_actions  # The set of valid actions
@@ -38,7 +38,7 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Update epsilon using a decay function of your choice
-        self.epsilon = self.epsilon * 0.986
+        self.epsilon = self.epsilon -0.0005
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
         if testing==True:
@@ -62,7 +62,8 @@ class LearningAgent(Agent):
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
 #        state = ((waypoint=='left') and (inputs['left']!='left') & (inputs['left']!='forward') & (inputs['light']=='green') & (inputs['oncoming']!='forward') & (inputs['right']!='left'), (waypoint=='forward') & (inputs['left']!='forward') & (inputs['light']=='green') & (inputs['oncoming']!='left') & (inputs['right']!='left') & (inputs['right']!='forward'), (waypoint=='right')  & (inputs['light']=='green') )
-        state = ((waypoint=='left') and (inputs['light']=='green') & (inputs['oncoming']!='forward')& (inputs['oncoming']!='right') ,(inputs['light']=='green')  , (waypoint=='right') & (inputs['left']!='forward' or inputs['light']=='green') )
+        state=(waypoint, inputs['light'], inputs['oncoming'], inputs['left'])
+#        state = ((waypoint=='left') and (inputs['light']=='green') & (inputs['oncoming']!='forward')& (inputs['oncoming']!='right') ,(inputs['light']=='green')  , (waypoint=='right') & (inputs['left']!='forward' or inputs['light']=='green') )
 #        state = ((  , inputs['left'], inputs['oncoming'], inputs['right'], inputs['light']))
         
         return state
@@ -170,7 +171,7 @@ class LearningAgent(Agent):
         if self.learning==True:
             old=self.Q[state][action]
             mx=self.get_maxQ(state)
-            self.Q[state][action]=old+self.alpha*(reward+mx-old)
+            self.Q[state][action]=old+self.alpha*(reward+0*mx-old)
 
         return
 
