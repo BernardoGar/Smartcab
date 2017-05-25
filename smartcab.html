@@ -13521,10 +13521,12 @@ Finally, I think deadline is not as important because the taxi does not have the
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer:</strong> Waypoint: 3x, light 2x, left 4x, right 4x, oncoming 4x. = 384 possible states.
+<p><strong>Answer:</strong> 
+For the final submission I used waypont: 3x, light 2x, oncoming cars 3x, and left coming cars 3x. This yields 54 possible states. 2000 trials are enough.</p>
+<p><strong>PREVIOUS SUMBISSIONS</strong></p>
+<p>Waypoint: 3x, light 2x, left 4x, right 4x, oncoming 4x. = 384 possible states.
 I think the agent could learn what to do with enough trials.</p>
 <p>After changing my states to ('Waypoint is left &amp; we have green light and oncoming traffic is neither coming forward nor right', 'Waypoint is forward and we have green light', 'Waypoint is right and we have either green light or no traffic coming forward from the left'), all we had were 3 possible states (one for any of the conditions which might be true, note that they are mutually exclusive) + 1 where neither states were true. This yields 4. This was hard-coding and it's wrong.</p>
-<p>For the final submission I used waypont: 3x, light 2x, oncoming cars 3x, and left coming cars 3x. This yields 54 states.</p>
 
 </div>
 </div>
@@ -27312,6 +27314,13 @@ For any state with:
  -- right : 0.73
  -- None : 2.19
  -- left : -40.79</p>
+<p><strong>Suboptimal</strong></p>
+<p>('left', 'green', 'forward', None)
+ -- forward : -0.40
+ -- right : 1.58
+ -- None : -4.99
+ -- left : -20.72</p>
+<p>This is suboptimal because it implies going right when waypoint is to the left. This is probabily because we give little punishment to lawful acts which are not towards the goal.</p>
 
 </div>
 </div>
