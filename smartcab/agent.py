@@ -61,12 +61,14 @@ class LearningAgent(Agent):
         ## TO DO ##
         ###########
         # Set 'state' as a tuple of relevant data for the agent        
-        state = (waypoint, inputs['left'], inputs['right'], inputs['light'], inputs['oncoming'])
-
+#        state = ((waypoint=='left') and (inputs['left']!='left') & (inputs['left']!='forward') & (inputs['light']=='green') & (inputs['oncoming']!='forward') & (inputs['right']!='left'), (waypoint=='forward') & (inputs['left']!='forward') & (inputs['light']=='green') & (inputs['oncoming']!='left') & (inputs['right']!='left') & (inputs['right']!='forward'), (waypoint=='right')  & (inputs['light']=='green') )
+        state = ((waypoint=='left') and (inputs['light']=='green') & (inputs['oncoming']!='forward')& (inputs['oncoming']!='right') ,(inputs['light']=='green')  , (waypoint=='right') & (inputs['left']!='forward' or inputs['light']=='green') )
+#        state = ((  , inputs['left'], inputs['oncoming'], inputs['right'], inputs['light']))
+        
         return state
 
 
-    def get_maxQ(self, state):
+    def get_bestQ(self, state):
         """ The get_max_Q function is called when the agent is asked to find the
             maximum Q-value of all actions based on the 'state' the smartcab is in. """
         print state
@@ -77,6 +79,23 @@ class LearningAgent(Agent):
         # Calculate the maximum Q-value of all actions for a given state
 
         maxQ = max(self.Q[state].iteritems(), key=operator.itemgetter(1))[0]
+        
+        return maxQ 
+        
+        
+    def get_maxQ(self, state):
+        """ The get_max_Q function is called when the agent is asked to find the
+            maximum Q-value of all actions based on the 'state' the smartcab is in. """
+        print state
+        print self
+        ########### 
+        ## TO DO ##
+        ###########
+        # Calculate the maximum Q-value of all actions for a given state
+
+        bn = max(self.Q[state].iteritems(), key=operator.itemgetter(1))[0]
+        maxQ=self.Q[state][bn]
+        
         return maxQ 
 
 
@@ -106,6 +125,7 @@ class LearningAgent(Agent):
         self.state = state
         self.next_waypoint = self.planner.next_waypoint()
         a=random.random()
+        bir=random.random()
 
         ########### 
         ## TO DO ##
@@ -116,11 +136,23 @@ class LearningAgent(Agent):
  
         if (self.learning==False) or a<self.epsilon :
  			action = random.choice(Environment.valid_actions)
+# 			action='right'
         else:
             print state
             print self
-            action=self.get_maxQ(state)
- 			
+            p=self.get_maxQ(state)
+            k=0
+            ar=[None, 'forward', 'left', 'right']
+            num=[]
+            while k<4:
+                if self.Q[state][ar[k]]==p:
+                    num.append(ar[k])
+                k=k+1
+            action=num[int(math.floor(bir*len(num)))]
+                   
+            
+            
+#            action='right'			
  
         return action
 
@@ -137,7 +169,8 @@ class LearningAgent(Agent):
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning==True:
             old=self.Q[state][action]
-            self.Q[state][action]=old+self.alpha*reward
+            mx=self.get_maxQ(state)
+            self.Q[state][action]=old+self.alpha*(reward+mx-old)
 
         return
 
@@ -192,7 +225,7 @@ def run():
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
     #sim = Simulator(env)
-    sim = Simulator(env, update_delay=0.01, log_metrics=True, optimized=True)
+    sim = Simulator(env, update_delay=0, log_metrics=True, optimized=True)
     
     ##############
     # Run the simulator
